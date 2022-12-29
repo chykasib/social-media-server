@@ -20,6 +20,30 @@ async function run() {
             const result = await PostDataCollection.insertOne(post);
             res.send(result);
         })
+
+        app.get('/PostData', async (req, res) => {
+            const query = {};
+            const result = await PostDataCollection.find(query).toArray();
+            res.send(result);
+        })
+
+        app.post('/like', (req, res) => {
+            const { id } = req.body
+            db.collection('posts').findOneAndUpdate(
+                { _id: new mongodb.ObjectId(id) },
+                { $inc: { likes: 1 } },
+                { returnOriginal: false },
+                (error, result) => {
+                    if (error) {
+                        console.error(error)
+                        return res.sendStatus(500)
+                    }
+
+                    res.send(result.value)
+                }
+            )
+        })
+
     }
     finally {
 
