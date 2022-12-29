@@ -9,12 +9,17 @@ app.use(cors())
 app.use(express.json())
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.rx4i6uo.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri)
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function run() {
     try {
+        const PostDataCollection = client.db('GatherUp').collection('PostData');
 
+        app.post('/PostData', async (req, res) => {
+            const post = req.body;
+            const result = await PostDataCollection.insertOne(post);
+            res.send(result);
+        })
     }
     finally {
 
